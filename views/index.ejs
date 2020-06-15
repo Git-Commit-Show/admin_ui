@@ -9,10 +9,12 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-
+<div class="container">
+  <h1>Scenes Information</h1><p>Total scenes:<%=(scenes_details).length%></p>The scenes are:<ul><%for(var i=0; i<(scenes_details).length; i++){%>
+<li><%=(scenes_details[i]).name%></li><%}%></ul><b>Current Scene:</b><%=currentScene%></div>
 <div class="container">
   <h2>Control Options</h2>
-  <button type="button" class="btn" id="start" onclick="location.href='/start'">Start Streaming</button>
+  <button type="button" class="btn" id="start" onclick="location.href='/start'"><%=StreamingStatus%></button>
   <button type="button" class="btn btn-default" onclick="location.href='/stop'">Stop Streaming</button>
   <button type="button" class="btn btn-primary" onclick="location.href='/masterclass'">Switch to MasterClass</button>
   <button type="button" class="btn btn-success" onclick="location.href='/showcase'">Switch to ShowCase</button>
