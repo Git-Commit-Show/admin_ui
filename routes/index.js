@@ -1,12 +1,15 @@
 var express = require('express');
 var router = express.Router();
 const OBSWebSocket = require('obs-websocket-js');
+var fs = require('fs');
+var path = require('path');
+var root = path.join(__dirname);
 
 const obs = new OBSWebSocket();
 var scenes;
 var currentScene;
 obs.connect({
-  address: 'localhost:4444',
+  address: 'https://www.paperspace.com/machine/psaqlqaw3',
   password: '0000'
 })
 .then(() => {
@@ -51,6 +54,7 @@ router.get('/masterclass',function(req,res,next){
    obs.send('SetCurrentScene', {
     'scene-name': 'MasterClass'
 });
+
 res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"MasterClass"});
 });
 router.get('/showcase',function(req,res,next){
@@ -69,6 +73,35 @@ router.get('/break',function(req,res,next){
   obs.send('SetCurrentScene', {
     'scene-name': 'Break'
 });
+res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"Break"});
+});
+router.get('/counter',function(req,res,next){
+  obs.send('SetCurrentScene', {
+    'scene-name': 'stats'   
+});
+
+/*fs.readFile(root+'‪\counter.txt',function(err,data){
+   fs.writeFile(root+'\counter.txt',data+1, function (err) {
+    if (err) throw err;
+    console.log('Replaced!');
+  });});*/
+  console.log('File contents:' + Number(fs.readFileSync(root+'counter.txt')));
+  //console.log(t);
+  fs.readFile(root+'counter.txt', 'utf-8', function(err, data) { 
+    // Write the data read from readeMe.txt 
+    // to a file writeMe.txt
+    if( !err ) 
+        {
+          console.log(data); 
+        fs.writeFile(root+'counter.txt‪', data, (err)=>{ 
+            if( err ) { 
+                throw err; 
+            } 
+        });} 
+    else
+        {throw err; }
+}); 
+
 res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"Break"});
 });
 module.exports = router;

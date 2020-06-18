@@ -8,6 +8,16 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
+<script>
+  function post_it(){
+    var list1=document.getElementById("add");
+    var new_elem = document.createElement("li");
+    new_elem.innerHTML = document.getElementById("announcements").value;
+    list1.appendChild(new_elem);
+    url = 'https://www.google.com' + encodeURIComponent(b);
+    document.location.href = url;
+  }
+</script>
 <body>
 <div class="container">
   <h1>Scenes Information</h1><p>Total scenes:<%=(scenes_details).length%></p>The scenes are:<ul><%for(var i=0; i<(scenes_details).length; i++){%>
@@ -19,7 +29,14 @@
   <button type="button" class="btn btn-primary" onclick="location.href='/masterclass'">Switch to MasterClass</button>
   <button type="button" class="btn btn-success" onclick="location.href='/showcase'">Switch to ShowCase</button>
   <button type="button" class="btn btn-info" onclick="location.href='/ques'">Switch to Ques/Ans</button>
-  <button type="button" class="btn btn-warning" onclick="location.href='/break'">Switch to Break</button>    
+  <button type="button" class="btn btn-warning" onclick="location.href='/break'">Switch to Break</button>
+  <button type="button" class="btn btn-warning" onclick="location.href='/counter'">Get Statistics</button>    
 </div>
+<br><br>
+<div  class="container">Post ammouncements: <input type="text" id="announcements" placeholder="Announcements" ><br>
+  <button onsubmit= "" class="btn-warning" name="Post announcements" onclick ="post_it()">Post</button></div>
+  <div class="container" id="announcements_sec"><h2>Special Announcements Posted:</h2>
+    <ul id="add"></ul>
+  </div>
 </body>
 </html>
