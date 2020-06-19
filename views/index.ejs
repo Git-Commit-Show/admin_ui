@@ -14,8 +14,6 @@
     var new_elem = document.createElement("li");
     new_elem.innerHTML = document.getElementById("announcements").value;
     list1.appendChild(new_elem);
-    url = 'https://www.google.com' + encodeURIComponent(b);
-    document.location.href = url;
   }
 </script>
 <body>
@@ -30,11 +28,11 @@
   <button type="button" class="btn btn-success" onclick="location.href='/showcase'">Switch to ShowCase</button>
   <button type="button" class="btn btn-info" onclick="location.href='/ques'">Switch to Ques/Ans</button>
   <button type="button" class="btn btn-warning" onclick="location.href='/break'">Switch to Break</button>
-  <button type="button" class="btn btn-warning" onclick="location.href='/counter'">Get Statistics</button>    
+  <button type="button" class="btn btn-warning" onclick="location.href='/counter'">Display Claps</button>    
 </div>
 <br><br>
-<div  class="container">Post ammouncements: <input type="text" id="announcements" placeholder="Announcements" ><br>
-  <button onsubmit= "" class="btn-warning" name="Post announcements" onclick ="post_it()">Post</button></div>
+<div  class="container">Post ammouncements: <form id="post_announcements" method="POST" action="/post"><input type="text" id="announcements" name="announcements" placeholder="Announcements" ><br>
+  <button class="btn-warning" name="Post" onclick ="post_it()">Post</button></div>
   <div class="container" id="announcements_sec"><h2>Special Announcements Posted:</h2>
     <ul id="add"></ul>
   </div>
