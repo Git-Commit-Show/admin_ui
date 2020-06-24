@@ -1,27 +1,78 @@
 var express = require('express');
-var router = express.Router();
+var session = require('express-session');
 const OBSWebSocket = require('obs-websocket-js');
 var fs = require('fs');
 var path = require('path');
+var bodyParser = require('body-parser');
+var path = require('path');
+var config1 = require('../config/login.json');
+var speakers = require('../config/speakers.json');
+const { router } = require('../app');
+const { request } = require('http');
+var obs_address = require('../config/obs.json');
 var filePath = path.join(__dirname,'../shared_files/counter.txt');
 var filePath1 = path.join(__dirname,'../shared_files/announcements.txt');
-
 const obs = new OBSWebSocket();
 var scenes;
 var currentScene;
-obs.connect({
-  address: 'localhost:4444',
-  password: '0000'
-})
-.then(() => {
-  console.log(`Success! We're connected & authenticated.`);
-})
-.catch(err => { // Promise convention dicates you have a catch on every chain.
-  console.log(err);
+
+var app = express();
+//Session
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: false
+}));
+
+app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json());
+
+//login
+app.get('/', function(req, res) {
+	res.render('login.ejs');
 });
-router.get('/', function(req, res, next) {
+app.post('/auth', function(request, response) {
+	var username = request.body.user_id;
+    var password = request.body.password;
+    if(username && password){
+	if (username ==config1[0].Admin.user_id && password==config1[0].Admin.password) {
+				request.session.loggedin = true;
+				request.session.username = username;
+				response.redirect('/users');
+			} else {
+				response.send('Incorrect Username and/or Password!');
+            }
+        }else{
+            response.send("Please enter both username and password");
+        }			
+});
+
+//connect to obs
+app.get('/users', function(request, response) {
+	if (request.session.loggedin) {
+    obs.connect({
+      address: obs_address[0].address, //Keep 0 for localhost address and 1 for remote server
+      password: obs_address[0].password  //Keep 0 for localhost password and 1 for remote server
+    })
+    .then(() => {
+      console.log(`Success! We're connected & authenticated.`);
+      response.redirect("/connect");
+    })
+    .catch(err => { // Promise convention dicates you have a catch on every chain.
+      response.send("Couldnt connect to OBS Studio"+ JSON.stringify(err));
+    });
+	} else {
+		response.redirect('/');
+  }
+});
+
+//open webpage
+app.get('/connect', function(req, res) {
+  if(req.session.loggedin){
   obs.sendCallback('GetStreamingStatus',{},(err,data)=>{
+    console.log(data);
     if(data.streaming==false){
+      
       res.render('index',{StreamingStatus:"Start Streaming",scenes_details:[],currentScene:null});
     }
     else{
@@ -36,13 +87,27 @@ router.get('/', function(req, res, next) {
           console.log('ScenesList:',data);
           res.render('index',{StreamingStatus:"Streaming",scenes_details:scenes,currentScene:currentScene});
         }
+
       });
     } 
   })
+}
+else{
+  res.redirect('/');
+}
 });
-router.get('/start',function(req,res,next){
+
+//start streaming
+app.get('/start',function(req,res){
   obs.sendCallback('StartStreaming',{},(err)=>{
-  })
+    if(err)
+    {
+      console.log(err);
+      res.send("Couldn't connect to the Socket!!<br>"+JSON.stringify(err));
+    }
+  });
+  obs.on('StreamStarting',()=>{console.log("Connecting")});
+  obs.on('StreamStarted',()=>{
   obs.sendCallback('GetSceneList', {}, (err, data) => {
     if(err)
     {
@@ -56,44 +121,51 @@ router.get('/start',function(req,res,next){
     }
   });
 });
+});
 
-router.get('/stop',function(req,res,next){  
+//stop streaming
+app.get('/stop',function(req,res){  
   obs.sendCallback('StopStreaming', (error) => {
-    console.log("stopped working");
+    if(error){
+    res.send("Couldn't Stop" + JSON.stringify(error));
+    }
   });
-  res.render('index',{"StreamingStatus":"Start Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"MasterClass"});
+  obs.on('StreamStopping',()=>{console.log("Stopping...")});
+  obs.on('StreamStopped',()=>{
+    res.render('index',{StreamingStatus:"Start Streaming",scenes_details:[],currentScene:null});
+  });
 });
 
-
-
-router.get('/masterclass',function(req,res,next){
-      obs.send('SetCurrentScene', {
-        'scene-name': 'MasterClass'
+//change scenes
+app.get('/scenes/:scene',function(req,res){
+   obs.sendCallback('GetCurrentScene',(err,data)=>{
+     if(req.params.scene==data.name)
+     {
+       console.log('The current Scene is the same!!');
+       res.redirect('/connect');
+     }
+     else{
+     }
+   });
+   obs.send('SetCurrentScene', {
+    'scene-name': req.params.scene})
+    .catch((err)=>{console.log(err);
     });
-res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"MasterClass"});
+    res.redirect('/connect');
 });
-router.get('/showcase',function(req,res,next){
-  obs.send('SetCurrentScene', {
-    'scene-name': 'ShowCase'
+
+//sound of claps
+var volume_data = 0;
+app.get('/counter',function(req,res){
+  obs.send('SetSourceSettings',{
+    'sourceName':"",
+    "sourceType" : "",
+    "sourceSettings":
+    {
+      "local_file" : "" 
+    }    
 });
-res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"ShowCase"});
-});
-router.get('/ques',function(req,res,next){
-  obs.send('SetCurrentScene', {
-    'scene-name': 'QuesAns'
-});
-res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"Ques/Ans"});
-});
-router.get('/break',function(req,res,next){
-  obs.send('SetCurrentScene', {
-    'scene-name': 'Break'
-});
-res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"Break"});
-});
-router.get('/counter',function(req,res,next){
-  obs.send('SetCurrentScene', {
-    'scene-name': 'stats'   
-});
+
   fs.readFile(filePath, 'utf-8', function(err, data) { 
     if( !err ) 
         {
@@ -105,11 +177,20 @@ router.get('/counter',function(req,res,next){
         });} 
     else
         {throw err; }
+       
 }); 
+obs.send('SetVolume',{
+  'source':"claps1",
+    "volume":volume_data
+});
+obs.on('SourceVolumeChanged',()=>{console.log("volume changed");});
 
 res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
+
 });
-router.all('/post',function(req,res,next){
+
+//post announcements
+app.all('/post',function(req,res){
   obs.send('SetCurrentScene', {
     'scene-name': 'stats'   
 });
@@ -120,4 +201,23 @@ router.all('/post',function(req,res,next){
 });
 res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
 });
-module.exports = router;
+
+//mute/unmute scenes
+app.get('/mute',function(req,res){
+  obs.send('ToggleMute',
+  {
+    "source":"SpeakerIntroVideo"
+  }).catch((error)=>
+  {
+  console.log(error);
+  });
+  res.redirect('/connect');
+});
+
+//Update upcoming talks
+app.get('/updatetalks',function(req,res){
+  obs.send('SetSourceSettings',{"sourceName":"SpeakerIntroVideo","sourceSettings": {"local_file":speakers[1].intro_video},"sourceType":'ffmpeg_source'}).catch((err)=>{console.log(err);});
+  res.redirect('/connect');
+});
+
+module.exports = app;
