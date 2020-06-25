@@ -146,8 +146,6 @@ app.get('/scenes/:scene',function(req,res){
        console.log('The current Scene is the same!!');
        res.redirect('/connect');
      }
-     else{
-     }
    });
    obs.send('SetCurrentScene', {
     'scene-name': req.params.scene})
@@ -187,7 +185,7 @@ obs.on('SourceVolumeChanged',()=>{console.log("volume changed");});
 
 res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});*/
 var i= 0;
-obs.send('SetCurrentScene',{"scene-name":"SpeakerScene"});
+obs.send('ToggleMute',{source:"Claps"});
 (async()=>
 {
   while(i<=1)
@@ -209,24 +207,28 @@ res.redirect('/connect');
 app.all('/post',function(req,res){
   obs.send('SetTextGDIPlusProperties',
   {"source":"Announcement",
-  "text":req.body.announcements
+  "text":req.body.announcements+ "     "
 }).catch((err)=>{
   res.send(err);
-});
-  fs.appendFile(filePath1,req.body.announcements, (err)=>{ 
-    if(err){
-      console.log(err);
-    }
 });
 res.redirect('/connect');
 //res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
 });
-
+app.all('/remove',function(req,res){
+  obs.send('SetTextGDIPlusProperties',
+  {"source":"Announcement",
+  "text":""
+}).catch((err)=>{
+  res.send(err);
+});
+res.redirect('/connect');
+//res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
+});
 //mute/unmute scenes
 app.get('/mute',function(req,res){
   obs.send('ToggleMute',
   {
-    "source":"SpeakerIntroVideo"
+    "source":"Claps"
   }).catch((error)=>
   {
   console.log(error);
@@ -235,9 +237,16 @@ app.get('/mute',function(req,res){
 });
 
 //Update upcoming talks
-app.get('/updatetalks',function(req,res){
-  obs.send('SetSourceSettings',{"sourceName":"SpeakerIntroVideo","sourceSettings": {"local_file":speakers[1].intro_video},"sourceType":'ffmpeg_source'}).catch((err)=>{console.log(err);});
+app.all('/updatetalks',function(req,res){
+  obs.send('SetSourceSettings',{"sourceName":"ShowcaseImage",
+  "sourceSettings": {"local_file":speakers[(req.body.count1)-1].image}
+})
+  .catch((err)=>{console.log(err);});
+  obs.send('SetSourceSettings',
+  {"sourceName":"SpeakerIntroVideo",
+  "sourceSettings": {"local_file":speakers[(req.body.count1)-1].video},
+  "sourceType":'ffmpeg_source'})
+  .catch((err)=>{console.log(err);});
   res.redirect('/connect');
 });
-
 module.exports = app;

@@ -36,14 +36,16 @@
             <button type="button" class=" btn btn-success" onclick="location.href='/scenes/<%= scenes_details[i].name %>'">Switch to <%= scenes_details[i].name %></button>             
 <% } %>
   <button type="button" class="btn btn-info" onclick="location.href='/counter'">Display Claps</button>  
-  <button type ="button" class ="btn btn-primary" id="mute" onclick="location.href='/mute'">Mute/Unmute</button>
-  <button type = "button" class="btn btn-danger" onclick="location.href = '/updatetalks'">Update Upcoming talks</button>  
+  <button type ="button" class ="btn btn-primary" id="mute" onclick="location.href='/mute'">Mute/Unmute Claps</button>
+  <br>
+  Enter the number of speaker:
+  <form id="updatetalks" method="POST" action="/updatetalks">
+   <input type="number" id="count1" name="count1" placeholder="Enter Count"><br>
+  <button type = "button" class="btn btn-danger" name="update">Update Upcoming talks</button>
+</form>
 </div>
-<br><br>
 <div  class="container">Post ammouncements: <form id="post_announcements" method="POST" action="/post"><input type="text" id="announcements" name="announcements" placeholder="Announcements" ><br>
-  <button class="btn-warning" name="Post" onclick ="post_it()">Post</button></div>
-  <div class="container" id="announcements_sec"><h2>Special Announcements Posted:</h2>
-    <ul id="add"></ul>
-  </div>
+  <button class="btn btn-warning" name="Post" onclick ="post_it()">Post</button></form>
+  <button class="btn btn-danger" name="remove" onclick="location.href='/remove'">Remove</button></div>
 </body>
 </html>

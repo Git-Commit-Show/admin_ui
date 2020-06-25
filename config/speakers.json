@@ -1,13 +1,86 @@
 [
     {
         "count":1,
-        "speaker-name": "nasdpigusnf",
-        "intro_video":"C:/Users/paperspace/Desktop/assets - gcs2020/Intro_Outro Videos/GCSIntroFINAL720p.mp4"
+        "speaker-name": "SCOTT HANSELMANN",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Scott.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Scott.mp4"
     },
     {
         "count":2,
-        "speaker-name": "cvndzoc",
-        "intro_video":"C:/Users/paperspace/Desktop/assets - gcs2020/Intro_Outro Videos/GCSOutroFINAL720p.mp4"
-
+        "speaker-name": "SARTHAK VATS",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Vats.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Vats.mp4"
+    },
+    {
+        "count":3,
+        "speaker-name": "ARPAN BANERJEE",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Arpan.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Arpan.mp4"
+    },
+{
+        "count":4,
+        "speaker-name": "ANUPAM VARGHESE",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Anupam.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Anupam.mp4"
+    },
+{
+        "count":5,
+        "speaker-name": "MUHAMMAD AHSAN AYAZ",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Muhammad.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Muhammad Ahsan Ayaz.mp4"
+    },
+{
+        "count":6,
+        "speaker-name": "ERIC NORMAND",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Eric.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Eric.mov"
+    },
+{
+        "count":7,
+        "speaker-name": "PHIL STURGEON",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Phil.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Phil.mp4"
+    },
+{
+        "count":8,
+        "speaker-name": "HAMPTON LINTORN CATLIN",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Hampton.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Hampton.mp4"
+    },
+{
+        "count":9,
+        "speaker-name": "GAURAV NEMADE",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Gaurav.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Gaurav.mp4"
+    },
+{
+        "count":10,
+        "speaker-name": "SAURABH GUPTA",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Saurabh.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Saurabh.mp4"
+    },
+{
+        "count":11,
+        "speaker-name": "ROGER DANNENBERRG",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Roger.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Roger.mp4"
+    },
+{
+        "count":12,
+        "speaker-name": "MAYA FARBER BRODSKY",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Maya.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Maya.mp4"
+    },
+{
+        "count":13,
+        "speaker-name": "SANDEEP GIRI",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/Sandeep.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/Sandeep.mp4"
+    },
+{
+        "count":14,
+        "speaker-name": "GAURAV SEN",
+        "image":"C:/Users/paperspace/Desktop/assets - gcs2020/Posters for Speakers/GauravSen.jpg",
+        "video": "C:/Users/paperspace/Desktop/assets - gcs2020/Speaker Introduction Videos/raw/GauravSen.mp4"
     }
 ]
