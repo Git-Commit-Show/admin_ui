@@ -17,6 +17,7 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "obs-websocket-js": "^4.0.1",
+    "sleep-promise": "^8.0.1",
     "utf-8-validate": "^5.0.2"
   }
 }

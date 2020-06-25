@@ -9,10 +9,39 @@ obs.connect({
   })
   .then(() => {
     console.log(`Success! We're connected & authenticated.`);
-    var max_vol = 0.7;
-    for(i=1;i<=max_vol;i=i+0.1){
-      obs.send('SetVolume',{"source":"clps","volume":i});
-    }
+   // obs.send('SetTextGDIPlusProperties',{"source":"Announcements","text":"No,Dont Do it"},);
+    /*obs.sendCallback('SetTextGDIPlusProperties',{},(err,data)=>{
+      console.log(data);
+      if(err){
+        console.log(err);
+      }
+    });*/
+    var i= 0;
+    while(i<=1)
+    {
+    obs.sendCallback('SetVolume',{source:"Claps",volume:i},(err,data)=>{
+      console.log(data);
+      if(err){
+        console.log(err);
+      }
+    });
+    obs.sendCallback('GetVolume',{source:"Claps"},(err,data)=>{
+      console.log(data);
+      if(err){
+        console.log(err);
+      }
+    });
+    i=i+0.1;
+  }
+    obs.sendCallback('GetSourceSettings',{"sourceName":"clps"},(err,data)=>{
+      console.log(data);
+      if(err){
+        console.log(err);
+      }
+    });
+    /*for(i=-80;i<=max_vol;i=i+10){
+      obs.send('SetVolume',{"source":"MasterClass1","volume":i}).catch((err)=>{console.log(err);});
+    }*/
     //obs.sendCallback('GetSourceSettings',{"sourceName":"try"},(err,data)=>{console.log(data);});
 })
 

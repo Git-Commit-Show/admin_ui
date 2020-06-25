@@ -5,11 +5,13 @@ var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser');
 var path = require('path');
+const sleep = require('sleep-promise');
 var config1 = require('../config/login.json');
 var speakers = require('../config/speakers.json');
 const { router } = require('../app');
 const { request } = require('http');
 var obs_address = require('../config/obs.json');
+const { setTimeout } = require('timers');
 var filePath = path.join(__dirname,'../shared_files/counter.txt');
 var filePath1 = path.join(__dirname,'../shared_files/announcements.txt');
 const obs = new OBSWebSocket();
@@ -51,8 +53,8 @@ app.post('/auth', function(request, response) {
 app.get('/users', function(request, response) {
 	if (request.session.loggedin) {
     obs.connect({
-      address: obs_address[0].address, //Keep 0 for localhost address and 1 for remote server
-      password: obs_address[0].password  //Keep 0 for localhost password and 1 for remote server
+      address: obs_address[1].address, //Keep 0 for localhost address and 1 for remote server
+      password: obs_address[1].password  //Keep 0 for localhost password and 1 for remote server
     })
     .then(() => {
       console.log(`Success! We're connected & authenticated.`);
@@ -155,9 +157,8 @@ app.get('/scenes/:scene',function(req,res){
 });
 
 //sound of claps
-var volume_data = 0;
 app.get('/counter',function(req,res){
-  obs.send('SetSourceSettings',{
+  /*obs.send('SetSourceSettings',{
     'sourceName':"",
     "sourceType" : "",
     "sourceSettings":
@@ -165,8 +166,7 @@ app.get('/counter',function(req,res){
       "local_file" : "" 
     }    
 });
-
-  fs.readFile(filePath, 'utf-8', function(err, data) { 
+ /* fs.readFile(filePath, 'utf-8', function(err, data) { 
     if( !err ) 
         {
           console.log(data); 
@@ -185,21 +185,41 @@ obs.send('SetVolume',{
 });
 obs.on('SourceVolumeChanged',()=>{console.log("volume changed");});
 
-res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
-
+res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});*/
+var i= 0;
+obs.send('SetCurrentScene',{"scene-name":"SpeakerScene"});
+(async()=>
+{
+  while(i<=1)
+{
+obs.sendCallback('SetVolume',{source:"Claps",volume:i},(err,data)=>{
+  console.log(data);
+  if(err){
+    console.log(err);
+  }
+});
+await sleep(5000);
+i=i+0.1;
+}
+})();
+res.redirect('/connect');
 });
 
 //post announcements
 app.all('/post',function(req,res){
-  obs.send('SetCurrentScene', {
-    'scene-name': 'stats'   
+  obs.send('SetTextGDIPlusProperties',
+  {"source":"Announcement",
+  "text":req.body.announcements
+}).catch((err)=>{
+  res.send(err);
 });
-  fs.writeFile(filePath1,req.body.announcements, (err)=>{ 
+  fs.appendFile(filePath1,req.body.announcements, (err)=>{ 
     if(err){
       console.log(err);
     }
 });
-res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
+res.redirect('/connect');
+//res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
 });
 
 //mute/unmute scenes
