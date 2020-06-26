@@ -203,7 +203,7 @@ res.redirect('/connect');
 app.all('/post',function(req,res){
   obs.send('SetTextGDIPlusProperties',
   {"source":"Announcement",
-  "text":req.body.announcements+ "     "
+  "text":req.body.announcements+ "      "
 }).catch((err)=>{
   res.send(err);
 });
@@ -243,4 +243,19 @@ app.all('/updatetalks',function(req,res){
   .catch((err)=>{console.log(err);});
   res.redirect('/connect');
 });
+var change_volume = 0;
+//To change claps sound as per click
+app.all('/claps',function(req,res)
+{
+  change_volume+=0.1;
+  obs.send('ToggleMute',{source:"Claps"});
+  obs.send('SetVolume',{source:"Claps",volume:change_volume},(err,data)=>{
+    console.log(data);
+    if(err){
+      console.log(err);
+    }
+  }
+  );
+});
+
 module.exports = app;
