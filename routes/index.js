@@ -6,14 +6,10 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var path = require('path');
 const sleep = require('sleep-promise');
-var config1 = require('../config/login.json');
 var speakers = require('../config/speakers.json');
 const { router } = require('../app');
 const { request } = require('http');
-var obs_address = require('../config/obs.json');
 const { setTimeout } = require('timers');
-var filePath = path.join(__dirname,'../shared_files/counter.txt');
-var filePath1 = path.join(__dirname,'../shared_files/announcements.txt');
 const obs = new OBSWebSocket();
 var scenes;
 var currentScene;
@@ -37,7 +33,7 @@ app.post('/auth', function(request, response) {
 	var username = request.body.user_id;
     var password = request.body.password;
     if(username && password){
-	if (username ==config1[0].Admin.user_id && password==config1[0].Admin.password) {
+	if (username == process.env.USER_ID && password==process.env.PASSWORD) {
 				request.session.loggedin = true;
 				request.session.username = username;
 				response.redirect('/users');
@@ -53,14 +49,14 @@ app.post('/auth', function(request, response) {
 app.get('/users', function(request, response) {
 	if (request.session.loggedin) {
     obs.connect({
-      address: obs_address[1].address, //Keep 0 for localhost address and 1 for remote server
-      password: obs_address[1].password  //Keep 0 for localhost password and 1 for remote server
+      address: process.env.OBS_WEBSOCKET_ADDRESS,
+      password: process.env.OBS_WEBSOCKET_PASSWORD
     })
     .then(() => {
       console.log(`Success! We're connected & authenticated.`);
       response.redirect("/connect");
     })
-    .catch(err => { // Promise convention dicates you have a catch on every chain.
+    .catch(err => { 
       response.send("Couldnt connect to OBS Studio"+ JSON.stringify(err));
     });
 	} else {
@@ -212,7 +208,6 @@ app.all('/post',function(req,res){
   res.send(err);
 });
 res.redirect('/connect');
-//res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
 });
 app.all('/remove',function(req,res){
   obs.send('SetTextGDIPlusProperties',
@@ -222,7 +217,6 @@ app.all('/remove',function(req,res){
   res.send(err);
 });
 res.redirect('/connect');
-//res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});
 });
 //mute/unmute scenes
 app.get('/mute',function(req,res){
@@ -239,7 +233,7 @@ app.get('/mute',function(req,res){
 //Update upcoming talks
 app.all('/updatetalks',function(req,res){
   obs.send('SetSourceSettings',{"sourceName":"ShowcaseImage",
-  "sourceSettings": {"local_file":speakers[(req.body.count1)-1].image}
+  "sourceSettings": {"file":speakers[(req.body.count1)-1].image}
 })
   .catch((err)=>{console.log(err);});
   obs.send('SetSourceSettings',

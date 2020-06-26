@@ -1,0 +1,4 @@
+USER_ID = "user_id"
+PASSWORD ="password"
+OBS_WEBSOCKET_ADDRESS = "Localhost:4444"
+OBS_WEBSOCKET_PASSWORD = "****"

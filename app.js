@@ -6,7 +6,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 
 var app = express();
-
+require('dotenv').config();
 process.env.NODE_ENV = 'staging';
 const config = require('./config/config.js');
 // view engine setup
