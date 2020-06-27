@@ -18,25 +18,20 @@
     new_elem.innerHTML = document.getElementById("announcements").value;
     list1.appendChild(new_elem);
   }
-  /*function onload_scenes()
-  {
-     var data = JSON.parse();
-    for(int i=0;i<test)
-  }*/
 </script>
 <body>
 <div class="container">
   <h1>Scenes Information</h1><p>Total scenes:<%=(scenes_details).length%></p>The scenes are:<ul><%for(var i=0; i<(scenes_details).length; i++){%>
-<li><%=(scenes_details[i]).name%></li><%}%></ul><b>Current Scene:</b><%=currentScene%></div>
+<li><%=(scenes_details[i]).name%></li><%}%></ul><h1 style="text-align:center;">Current Scene:<%=currentScene%></h1></div>
 <div class="container">
   <h2>Control Options</h2>
   <button type="button" class="btn" id="start" onclick="location.href='/start'"><%=StreamingStatus%></button>
   <button type="button" class="btn btn-warning" onclick="location.href='/stop'">Stop Streaming</button>
   <% for(var i=0; i<(scenes_details).length; i++) {%>
-            <button type="button" class=" btn btn-success" onclick="location.href='/scenes/<%= scenes_details[i].name %>'">Switch to <%= scenes_details[i].name %></button>             
+            <button type="button" class=" btn btn-success" onclick="location.href='/scenes/<%= scenes_details[i].name %>'">Switch to <%= scenes_details[i].name %></button>&nbsp;&nbsp;             
 <% } %>
   <button type="button" class="btn btn-info" onclick="location.href='/counter'">Display Claps</button>  
-  <button type ="button" class ="btn btn-primary" id="mute" onclick="location.href='/mute'">Mute/Unmute Claps</button>
+  <button type ="button" class ="btn btn-primary" id="mute" onclick="location.href='/mute'">Mute Claps</button>
   <br>
   Enter the number of speaker:
   <form id="updatetalks" method="POST" action="/updatetalks">

@@ -184,7 +184,7 @@ var i= 0;
 obs.send('ToggleMute',{source:"Claps"});
 (async()=>
 {
-  while(i<=1)
+  while(i<1)
 {
 obs.sendCallback('SetVolume',{source:"Claps",volume:i},(err,data)=>{
   console.log(data);
@@ -220,7 +220,7 @@ res.redirect('/connect');
 });
 //mute/unmute scenes
 app.get('/mute',function(req,res){
-  obs.send('ToggleMute',
+  obs.send('SetMute',
   {
     "source":"Claps"
   }).catch((error)=>
