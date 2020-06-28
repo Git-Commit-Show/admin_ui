@@ -152,37 +152,11 @@ app.get('/scenes/:scene',function(req,res){
 
 //sound of claps
 app.get('/counter',function(req,res){
-  /*obs.send('SetSourceSettings',{
-    'sourceName':"",
-    "sourceType" : "",
-    "sourceSettings":
-    {
-      "local_file" : "" 
-    }    
-});
- /* fs.readFile(filePath, 'utf-8', function(err, data) { 
-    if( !err ) 
-        {
-          console.log(data); 
-        fs.writeFile(filePath, parseInt(data)+1, (err)=>{ 
-            if( err ) { 
-                throw err; 
-            } 
-        });} 
-    else
-        {throw err; }
-       
-}); 
-obs.send('SetVolume',{
-  'source':"claps1",
-    "volume":volume_data
-});
-obs.on('SourceVolumeChanged',()=>{console.log("volume changed");});
+ 
 
-res.render('index',{"StreamingStatus":"Streaming",scenes_details:scenes,scenes_details:scenes,currentScene:"stats"});*/
-var i= 0;
-obs.send('ToggleMute',{source:"Claps"});
-(async()=>
+//var i= 0;
+obs.send('SetMute',{source:"Claps",mute:false});
+/*(async()=>
 {
   while(i<1)
 {
@@ -195,6 +169,23 @@ obs.sendCallback('SetVolume',{source:"Claps",volume:i},(err,data)=>{
 await sleep(5000);
 i=i+0.1;
 }
+})();*/
+(async()=>
+{obs.sendCallback('SetVolume',{source:"Claps",volume:0.9},(err,data)=>{
+  console.log(data);
+  if(err){
+    console.log(err);
+  }
+});
+await sleep(30000);
+obs.send('SetMute',
+  {
+    source:"Claps",
+    mute:true
+  }).catch((error)=>
+  {
+  console.log(error);
+  });
 })();
 res.redirect('/connect');
 });
@@ -220,7 +211,8 @@ res.redirect('/connect');
 });
 //mute/unmute scenes
 app.get('/mute',function(req,res){
-  obs.send('SetMute',
+  obs.send('SetMute',{source:"",mute:true});
+  obs.send('GetMute',
   {
     "source":"Claps"
   }).catch((error)=>
