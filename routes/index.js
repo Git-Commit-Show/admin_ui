@@ -71,7 +71,7 @@ app.get('/connect', function(req, res) {
     console.log(data);
     if(data.streaming==false){
       
-      res.render('index',{StreamingStatus:"Start Streaming",scenes_details:[],currentScene:null});
+      res.render('index',{StreamingStatus:"Not Streaming",scenes_details:[],currentScene:null});
     }
     else{
       obs.sendCallback('GetSceneList', {}, (err, data) => {
@@ -130,7 +130,7 @@ app.get('/stop',function(req,res){
   });
   obs.on('StreamStopping',()=>{console.log("Stopping...")});
   obs.on('StreamStopped',()=>{
-    res.render('index',{StreamingStatus:"Start Streaming",scenes_details:[],currentScene:null});
+    res.render('index',{StreamingStatus:"Not Streaming",scenes_details:[],currentScene:null});
   });
 });
 
