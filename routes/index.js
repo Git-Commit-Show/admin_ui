@@ -10,6 +10,7 @@ var speakers = require('../config/speakers.json');
 const { router } = require('../app');
 const { request } = require('http');
 const { setTimeout } = require('timers');
+const url = require('url');
 const obs = new OBSWebSocket();
 var scenes;
 var currentScene;
@@ -22,12 +23,12 @@ app.use(session({
 	saveUninitialized: false
 }));
 
-app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json());
 
 //login
 app.get('/', function(req, res) {
-	res.render('login.ejs');
+	res.render('login.ejs',{message:""});
 });
 app.post('/auth', function(request, response) {
 	var username = request.body.user_id;
@@ -35,13 +36,13 @@ app.post('/auth', function(request, response) {
     if(username && password){
 	if (username == process.env.USER_ID && password==process.env.PASSWORD) {
 				request.session.loggedin = true;
-				request.session.username = username;
+        request.session.username = username;
 				response.redirect('/users');
 			} else {
-				response.send('Incorrect Username and/or Password!');
+        response.render('login',{message:"Incorrect Username and/or Password!"});
             }
         }else{
-            response.send("Please enter both username and password");
+          response.render('login',{message:"Please enter both username and password"});
         }			
 });
 
@@ -57,9 +58,10 @@ app.get('/users', function(request, response) {
       response.redirect("/connect");
     })
     .catch(err => { 
-      response.send("Couldnt connect to OBS Studio"+ JSON.stringify(err));
-    });
-	} else {
+      console.log("Couldnt connect to OBS Studio"+ JSON.stringify(err));
+      response.render('index',{message:"OBS not connected",StreamingStatus:"OBS not connected",scenes_details:[],currentScene:null});
+    }); 
+  	} else {
 		response.redirect('/');
   }
 });
@@ -67,11 +69,10 @@ app.get('/users', function(request, response) {
 //open webpage
 app.get('/connect', function(req, res) {
   if(req.session.loggedin){
-  obs.sendCallback('GetStreamingStatus',{},(err,data)=>{
-    console.log(data);
+   obs.sendCallback('GetStreamingStatus',{},(err,data)=>{
     if(data.streaming==false){
       
-      res.render('index',{StreamingStatus:"Not Streaming",scenes_details:[],currentScene:null});
+      res.render('index',{message:"",StreamingStatus:"Not Streaming",scenes_details:[],currentScene:null});
     }
     else{
       obs.sendCallback('GetSceneList', {}, (err, data) => {
@@ -83,13 +84,13 @@ app.get('/connect', function(req, res) {
           scenes = data['scenes'];
           currentScene = data['currentScene'];
           console.log('ScenesList:',data);
-          res.render('index',{StreamingStatus:"Streaming",scenes_details:scenes,currentScene:currentScene});
+          res.render('index',{message:"",StreamingStatus:"Streaming",scenes_details:scenes,currentScene:currentScene});
         }
-
       });
     } 
   })
 }
+
 else{
   res.redirect('/');
 }
@@ -97,11 +98,17 @@ else{
 
 //start streaming
 app.get('/start',function(req,res){
+  var msg = "";
   obs.sendCallback('StartStreaming',{},(err)=>{
     if(err)
     {
       console.log(err);
-      res.send("Couldn't connect to the Socket!!<br>"+JSON.stringify(err));
+      if(err.code=="NOT_CONNECTED"){
+        res.render('index',{message:err.description,StreamingStatus:"OBS Not Connected",scenes_details:[],currentScene:[]});
+      }
+      else if(err.error=="streaming already active"){
+        msg=err.error;
+      }
     }
   });
   obs.on('StreamStarting',()=>{console.log("Connecting")});
@@ -115,7 +122,7 @@ app.get('/start',function(req,res){
       scenes = data['scenes'];
       currentScene = data['currentScene'];
       console.log('ScenesList:',data);
-      res.render('index',{StreamingStatus:"Streaming",scenes_details:scenes,currentScene:currentScene});
+      res.render('index',{message:msg,StreamingStatus:"Streaming",scenes_details:scenes,currentScene:currentScene});
     }
   });
 });
@@ -123,14 +130,21 @@ app.get('/start',function(req,res){
 
 //stop streaming
 app.get('/stop',function(req,res){  
+  var msg="";
   obs.sendCallback('StopStreaming', (error) => {
     if(error){
-    res.send("Couldn't Stop" + JSON.stringify(error));
+        console.log(error);
+        if(error.code=="NOT_CONNECTED"){
+          res.render('index',{message:error.description,StreamingStatus:"OBS Not Connected",scenes_details:[],currentScene:[]});
+        }
+        else if(error.error=="streaming not active"){
+          msg=error.error;
+        }
     }
   });
-  obs.on('StreamStopping',()=>{console.log("Stopping...")});
+  //obs.on('StreamStopping',()=>{console.log("Stopping...")});
   obs.on('StreamStopped',()=>{
-    res.render('index',{StreamingStatus:"Not Streaming",scenes_details:[],currentScene:null});
+    res.render('index',{message:"",StreamingStatus:"Not Streaming",scenes_details:[],currentScene:null});
   });
 });
 
@@ -192,17 +206,23 @@ res.redirect('/connect');
 
 //post announcements
 app.all('/post',function(req,res){
-  obs.send('SetTextGDIPlusProperties',
-  {"source":"Announcement",
-  "text":req.body.announcements+ "      "
-}).catch((err)=>{
-  res.send(err);
+  const queryObject = url.parse(req.url,true).query;
+  var announcements = queryObject['announcements'];
+  
+  obs.sendCallback('SetTextGDIPlusProperties',{"source":"Announcements",
+  "text":announcements+ "      "},(err)=>{
+  if(err.code=="NOT_CONNECTED")
+  {
+    res.render('index',{message:err.description,StreamingStatus:"OBS Not Connected",scenes_details:[],currentScene:[]});
+  }
+  else{
+    res.redirect('/connect');
+  }
 });
-res.redirect('/connect');
 });
 app.all('/remove',function(req,res){
   obs.send('SetTextGDIPlusProperties',
-  {"source":"Announcement",
+  {"source":"Announcements",
   "text":""
 }).catch((err)=>{
   res.send(err);
@@ -210,16 +230,21 @@ app.all('/remove',function(req,res){
 res.redirect('/connect');
 });
 //mute/unmute scenes
-app.get('/mute',function(req,res){
-  obs.send('SetMute',{source:"",mute:true});
-  obs.send('GetMute',
-  {
-    "source":"Claps"
-  }).catch((error)=>
-  {
-  console.log(error);
+app.post('/mute',function(req,res){
+  const queryObject = url.parse(req.url,true).query;
+  var source = queryObject['source'];
+  obs.sendCallback('SetMute',{source:source,mute:true},(err)=>{
+    if(err)
+    {
+      console.log(err);
+      if(err.code=="NOT_CONNECTED"){
+        res.render('index',{message:err.description,StreamingStatus:"OBS Not Connected",scenes_details:[],currentScene:[]});
+      }
+    }
+    else{
+      res.redirect('/connect');
+    }
   });
-  res.redirect('/connect');
 });
 
 //Update upcoming talks
