@@ -1,4 +1,6 @@
-USER_ID = "user_id"
+USER_ID = "admin"
 PASSWORD ="password"
 OBS_WEBSOCKET_ADDRESS = "Localhost:4444"
-OBS_WEBSOCKET_PASSWORD = "****"
+OBS_WEBSOCKET_PASSWORD = "0000"
+NODE_PORT = 3000
+NODE_ENV = "development"
