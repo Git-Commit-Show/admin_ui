@@ -1,9 +1,0 @@
-1. Remove config.js, use dotenv
-2. Separate Development and Production environment
-a. Remove static dev dependencies from main package.json
-b. Keep production ready assets in a separate folder (assets)
-c. Separate development assets, automation tasks and dependencies
-3. Server side : remove “obs not running” error
-4. Tabularise and  change question table format
-5. OBS connectivity to be separated(render index page in any case)
-6. Add link option in select option(streaming links)
