@@ -75,8 +75,8 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-          <a class="sidebar-brand brand-logo" href="index.html"><img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/7a07766a-6d40-45ab-8989-2f7835212c15/logo.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20200714%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20200714T115954Z&X-Amz-Expires=86400&X-Amz-Signature=1349796e59cd8a608316fb8ca561f93ae47c803fae1e64ade80fae4f99f49696&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22logo.png%22" alt="logo"/></a>
-          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/7a07766a-6d40-45ab-8989-2f7835212c15/logo.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20200714%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20200714T115954Z&X-Amz-Expires=86400&X-Amz-Signature=1349796e59cd8a608316fb8ca561f93ae47c803fae1e64ade80fae4f99f49696&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22logo.png%22" alt="logo"  /></a>
+          <a class="sidebar-brand brand-logo" href=""><img src="assets/images/logo.png" alt="logo"/></a>
+          <a class="sidebar-brand brand-logo-mini" href=""><img src="assets/images/logo.png" alt="logo"  /></a>
         </div>
         <ul class="nav">
           <li class="nav-item profile">
@@ -220,7 +220,7 @@
         <!-- partial:partials/_navbar.html -->
         <nav class="navbar p-0 fixed-top d-flex flex-row">
           <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-            <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini" href="#"><img src="assets/images/logo.png" alt="logo" /></a>
           </div>
           <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -372,7 +372,7 @@
                 <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
                   <div class="navbar-profile">
                     <img class="img-xs rounded-circle" src="assets/images/faces/face15.jpg" alt="">
-                    <p class="mb-0 d-none d-sm-block navbar-profile-name">Henry Klein</p>
+                    <p class="mb-0 d-none d-sm-block navbar-profile-name">Admin</p>
                     <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                   </div>
                 </a>
@@ -536,23 +536,11 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Livestreaming Options</h4>
-                    <img src ="https://www.eresources.com/wp-content/uploads/2018/07/YouTube_Live_Logo.png" class="transaction-chart" width="306" height="200">
+                    <img src ="assets/images/YouTube_Live_Logo.png" class="transaction-chart" width="306" height="200">
                     <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
-                      <div class="align-self-center flex-grow text-sm-left py-md-2 py-xl-0">Add Streaming Link</div>
-                      <!--div class="btn-group">
-                        <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Add Livestreaming link
-                        </button>
-                        <div class="dropdown-menu">
-                          <a class="dropdown-item" href="#">YouTube_Live</a>
-                          <a class="dropdown-item" href="#">Twitch</a>
-                          <a class="dropdown-item" href="#">livestream.io</a>
-                          <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="#">Add new meeting link</a>
-                        </div>
-                      </div-->
+                      <div class="flex-grow text-sm-left py-md-2 py-xl-0">Add Streaming Link</div>
                       <div class="dropdown-menu-right">
-                      <select name="live_link" class=" text-white btn-danger" id="live_link" onchange="change_link()">
+                      <select name="live_link" class=" text-white btn-danger" id="live_link" onchange="change_link()" width="150px">
                         <option class="dropdown-item bg-gray-dark" value="youtube">Youtube</option>
                         <option class="dropdown-item  bg-gray-dark" value="Twitch">Twitch</option>
                         <option class="dropdown-item bg-gray-dark" value="Twitch">Twitch</option>
@@ -565,7 +553,7 @@
                     <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
                       <div class="align-self-center flex-grow text-sm-left  py-md-2 py-xl-0">Attendee Meeting Link</div>
                         <div class="dropdown-menu-right text-sm-right">
-                          <select name="live_link1" class=" text-white btn-danger" id="live_link1" onchange="change_attendee_link()">
+                          <select name="live_link1" class=" text-white bg-danger" id="live_link1" onchange="change_attendee_link()"  width = "75px" style="max-width:'75px';width:'75px';overflow:'hidden'">
                             <option class="dropdown-item bg-gray-dark" value="youtube" selected>Youtube</option>
                             <option class="dropdown-item  bg-gray-dark" value="Twitch">Twitch</option>
                             <option class="dropdown-item bg-gray-dark" value="Twitch">Twitch</option>
@@ -574,26 +562,61 @@
                             <option class="dropdown-item  bg-gray-dark" value="add_link">Add new attendee link</option>
                           </select>
                         </div>
-                        <!--div class="btn-group">
-                          <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Attendee Meeting Link
-                          </button-->
-                          <!--div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Zoom</a>
-                            <a class="dropdown-item" href="#">jitsi</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Add new attendee link</a>
-                          </div>
-                        </div-->
                     </div>
                   </div>
                 </div>
               </div>
               <div class="col-md-8 grid-margin stretch-card">
                 <div class="card">
-                  <div class="card-body">
-                    <div class="d-flex flex-row justify-content-between">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="text-white" ><h4>Questions(500)</h4></th>
+                          <th class="text-muted"><h4> +10 hours ago</h4></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="text-white questions">Why do we use relu activation function?
+                          </td>
+                          <td class="text-muted">1 hour ago
+                            </td>
+                            </tr>
+                            <tr>
+                              <td class="text-white questions">Cannot see the presentation</td>
+                              <td class="text-muted">1 hour ago
+                                </td>
+                                </tr>
+                                <tr>
+                                  <td class="text-white questions">Please share me the link? https://github.com/ushareng/GitCommit.Show
+                                  </td><td class="text-muted">1 hour ago
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="text-white questions">Please submit the feedback and we will share a free givewaway with you https://forms.gle/Wa19jkU9pyy1jkCG6
+                                      </td>
+                                      <td class="text-muted">30 minutes ago
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-white questions">Please share the notebook for rock paper scisscors
+                                          </td>
+                                          <td class="text-muted">15 minutes ago
+                                            </td>
+                                            </tr>
+                            <tr>
+                              <td class="text-white questions">How do we decide which loss function to you?
+                              </td>
+                              <td class="text-muted">10 minutes ago
+                                </td>
+                                </tr>
+                                </tbody>
+                                </table>
+                </div>
+              </div>
+            </div>
+
+                    <!--div class="d-flex flex-row justify-content-between">
                       <h4 class="card-title mb-1">Questions(500)</h4>
                       <h4 class="card-title mb-1 text-muted">+10 an hour ago</h4>
                     </div>
@@ -604,7 +627,7 @@
                             
                             <div class="preview-item-content d-sm-flex flex-grow">
                               <div class="flex-grow">
-                                <h6 class="preview-subject">Admin dashboard design</h6>
+                                <p class="preview-subject">How do we decide which loss function to you?</p>
                                 
                               </div>
                               <div class="mr-auto text-sm-right pt-2 pt-sm-0">
@@ -617,7 +640,7 @@
         
                             <div class="preview-item-content d-sm-flex flex-grow">
                               <div class="flex-grow">
-                                <h6 class="preview-subject">Wordpress Development</h6>
+                                <p class="preview-subject">Why do we use relu activation function?</p>
                                 
                               </div>
                               <div class="mr-auto text-sm-right pt-2 pt-sm-0">
@@ -630,7 +653,7 @@
                             
                             <div class="preview-item-content d-sm-flex flex-grow">
                               <div class="flex-grow">
-                                <h6 class="preview-subject">Project meeting</h6>
+                                <p class="preview-subject">https://docs.google.com/presentation/d/1ZdFa_ECoQuFeddXR4XTXLfbynjWH0nUKYokLPs86LjE/edit?usp=sharinghttps://github.com/ushareng/GitCommit.Show</p>
 
                               </div>
                               <div class="mr-auto text-sm-right pt-2 pt-sm-0">
@@ -670,7 +693,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div-->
             <!--div class="row">
               <div class="col-sm-4 grid-margin">
                 <div class="card">
@@ -1108,7 +1131,7 @@
         </div>
           <footer class="footer">
             <div class="d-sm-flex justify-content-center justify-content-sm-between">
-              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2019 <a href="https://www.bootstrapdash.com/" target="_blank">BootstrapDash</a>. All rights reserved.</span>
+              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2020 <a href="https://www.invidelabs.com/" target="_blank">Invide Labs</a>. All rights reserved.</span>
               <span class="text-muted float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
             </div>
           </footer>
