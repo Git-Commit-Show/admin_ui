@@ -4,10 +4,10 @@
   "private": true,
   "main": "server/app.js",
   "scripts": {
-    "gulp production": "cd client && npm install && gulp serve",
+    "gulp production": "cd theme && npm install && gulp serve",
     "install": "cd server && npm install",
     "start": "node server/app.js",
     "dev": "nodemon start",
-    "postinstall": "cd client && npm install"
+    "postinstall": "cd theme && npm install"
   }
 }
