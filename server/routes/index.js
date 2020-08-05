@@ -10,6 +10,7 @@ var speakers = require('../config/speakers.json');
 const { router } = require('../app');
 const { request } = require('http');
 const { setTimeout } = require('timers');
+var redis = require('redis');
 const url = require('url');
 const obs = new OBSWebSocket();
 var scenes;
@@ -22,6 +23,15 @@ app.use(session({
 	resave: true,
 	saveUninitialized: false
 }));
+
+var redis_host = process.env.REDIS_HOST;
+var redis_port = process.env.REDIS_PORT;
+var redis_password = process.env.REDIS_PASSWORD;
+var client = redis.createClient(redis_port,redis_host,redis_password);
+
+client.on('connect', function() {
+  console.log('connected');
+});
 
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json());
@@ -163,7 +173,60 @@ app.get('/scenes/:scene',function(req,res){
     });
     res.redirect('/connect');
 });
+ 
+app.all('/links',function(req,res){
+  var live = [];
+  client.lrange('live', 0, -1, function(err, reply) {
+    res.send(reply);
+});
 
+  /*client.keys('live*', function (err, keys) {
+      if (err) return console.log(err);
+      if(keys){
+        for(i=0;i<keys.length;i++)
+        {
+          client.get(keys[i],function(err,reply){
+            if(!err){
+              live.push(reply);          }
+          })
+        }
+      }
+  });*/
+});
+app.all('/attendee_links',function(req,res){
+  var live = [];
+  client.lrange('attendee', 0, -1, function(err, reply) {
+    console.log(reply);
+    res.send(reply);
+});
+});
+app.all('/add_link',function(req,res){
+  const queryObject = url.parse(req.url,true).query;
+  let link = queryObject['link'];
+  client.rpush('live',link,function(err,reply){
+    if(err)
+    {
+      console.log(err);
+    }
+  });
+  //let count1 = "live"+queryObject['count'];
+  //console.log(count1);
+  //client.set(count1,link);
+  res.redirect('/users');
+});
+app.all('/add_attendee_link',function(req,res){
+  const queryObject = url.parse(req.url,true).query;
+  let link = queryObject['link'];
+  client.rpush('attendee',link,function(err,reply){
+    if(err)
+    {
+      console.log(err);
+    }
+  });
+  /*let count1 = "attendee"+queryObject['count'];
+  client.set(count1,link);*/
+  res.redirect('/users');
+});
 //sound of claps
 app.get('/counter',function(req,res){
  

@@ -16,12 +16,40 @@
     <link rel="stylesheet" href="assets/vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.carousel.min.css">
     <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <!-- endinject -->
     <!-- Layout styles -->
     <script>
-      function change_status(){
+    $(document).ready(function(){
+      
+      $.get("/links", function(data, status){
+        for(i=0;i<data.length;i++)
+        {
+            var opt = document.createElement('option');
+            opt.appendChild( document.createTextNode(data[i]));
+            opt.value = data[i];
+            opt.classList.add("dropdown-item","bg-gray-dark");
+            live_link.insertBefore(opt,live_link.children[live_link.options.length-1]);
+        }
+   });
+   $.get("/attendee_links", function(data, status){
+    let live_link1 = document.getElementById('live_link1');
+        for(i=0;i<data.length;i++)
+        {
+            var opt = document.createElement('option');
+            opt.appendChild( document.createTextNode(data[i]));
+            opt.value = data[i];
+            opt.classList.add("dropdown-item","bg-gray-dark");
+            live_link1.insertBefore(opt,live_link1.children[live_link1.options.length-1]);
+        }
+   });
+});
+
+    </script>
+    <script>
+        function change_status(){
         var status = document.getElementById('streaming_status').checked;
         if(status==true)
         {
@@ -41,12 +69,10 @@
          if(y=="add_link"){
           var person = prompt("Please enter new live streaming link");
           if (person != null) {
+            
             let live_link = document.getElementById('live_link');
-            var opt = document.createElement('option');
-            opt.appendChild( document.createTextNode(person));
-            opt.value = person;
-            opt.classList.add("dropdown-item","bg-gray-dark");
-            live_link.insertBefore(opt,live_link.children[live_link.options.length-1]);
+            window.location.href='/add_link?link='+person+'&count='+live_link.options.length;
+            
             alert("New Link added!");
 }
          }
@@ -57,11 +83,7 @@
           var person = prompt("Please enter new attendee link");
           if (person != null) {
             let live_link = document.getElementById('live_link1');
-            var opt = document.createElement('option');
-            opt.appendChild( document.createTextNode(person));
-            opt.value = person;
-            opt.classList.add("dropdown-item","bg-gray-dark");
-            live_link.insertBefore(opt,live_link.children[live_link.options.length-1]);
+            window.location.href='/add_attendee_link?link='+person+'&count='+live_link.options.length;
             alert("New Link added!");
 }
          }
@@ -422,7 +444,7 @@
             </div>
             <div class="row">
               <div class="col-12 grid-margin">
-                <div class="">
+                <div class=""></div>
                   <div class="py-0 px-0 px-sm-3">
                     <div class="row align-items-center">
                       <div class="col-4 col-sm-3 col-xl-2 container">
