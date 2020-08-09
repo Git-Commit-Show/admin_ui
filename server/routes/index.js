@@ -10,6 +10,7 @@ var speakers = require('../config/speakers.json');
 const { router } = require('../app');
 const { request } = require('http');
 const { setTimeout } = require('timers');
+var redis = require('redis');
 const url = require('url');
 const obs = new OBSWebSocket();
 var scenes;
@@ -22,6 +23,15 @@ app.use(session({
 	resave: true,
 	saveUninitialized: false
 }));
+
+var redis_host = process.env.REDIS_HOST;
+var redis_port = process.env.REDIS_PORT;
+var redis_password = process.env.REDIS_PASSWORD;
+var client = redis.createClient(redis_port,redis_host,redis_password);
+
+client.on('connect', function() {
+  console.log('connected');
+});
 
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json());
@@ -67,8 +77,8 @@ app.get('/users', function(request, response) {
 });
 
 //open webpage
-app.get('/connect', function(req, res) {
-  if(req.session.loggedin){
+app.get('/connect',isAuthenticated, function(req, res) {
+
    obs.sendCallback('GetStreamingStatus',{},(err,data)=>{
     if(data.streaming==false){
       
@@ -89,15 +99,12 @@ app.get('/connect', function(req, res) {
       });
     } 
   })
-}
 
-else{
-  res.redirect('/');
-}
+
 });
 
 //start streaming
-app.get('/start',function(req,res){
+app.get('/start',isAuthenticated,function(req,res){
   var msg = "";
   obs.sendCallback('StartStreaming',{},(err)=>{
     if(err)
@@ -129,7 +136,7 @@ app.get('/start',function(req,res){
 });
 
 //stop streaming
-app.get('/stop',function(req,res){  
+app.get('/stop',isAuthenticated,function(req,res){  
   var msg="";
   obs.sendCallback('StopStreaming', (error) => {
     if(error){
@@ -149,7 +156,7 @@ app.get('/stop',function(req,res){
 });
 
 //change scenes
-app.get('/scenes/:scene',function(req,res){
+app.get('/scenes/:scene',isAuthenticated,function(req,res){
    obs.sendCallback('GetCurrentScene',(err,data)=>{
      if(req.params.scene==data.name)
      {
@@ -163,9 +170,68 @@ app.get('/scenes/:scene',function(req,res){
     });
     res.redirect('/connect');
 });
+ 
+app.all('/configuration/livestream/live_link',isAuthenticated,function(req,res){
+  client.lrange('configuration:livestream:live', 0, -1, function(err, reply) {
+    res.send(reply);
+});
+});
+app.get('/configuration/livestream/attendee_link',isAuthenticated,function(req,res){
+  client.lrange('configuration:livestream:attendee', 0, -1, function(err, reply) {
+    res.send(reply);
+});
+});
+app.get('/livestream/new_link',isAuthenticated,function(req,res){
+  const queryObject = url.parse(req.url,true).query;
+  let link = queryObject['link'];
+  client.rpush('configuration:livestream:live',link,function(err,reply){
+    if(err)
+    {
+      console.log(err);
+    }
+  });
+  //let count1 = "live"+queryObject['count'];
+  //console.log(count1);
+  //client.set(count1,link);
+  res.redirect('/users');
+});
+app.get('/livestream/new_attendee_link',isAuthenticated,function(req,res){
+  const queryObject = url.parse(req.url,true).query;
+  let link = queryObject['link'];
+  client.rpush('configuration:livestream:attendee',link,function(err,reply){
+    if(err)
+    {
+      console.log(err);
+    }
+  });
+  /*let count1 = "attendee"+queryObject['count'];
+  client.set(count1,link);*/
+  res.redirect('/users');
+});
+
+app.get('/configuration/livestream/live_settings',isAuthenticated,function(req,res){
+  total_reply={}
+  client.lrange('configuration:livestream:live_settings:HandsRaised', 0, -1, function(err, reply) {
+    total_reply['HandsRaised']=reply;
+    
+});
+client.lrange('configuration:livestream:live_settings:ClapsRaised', 0, -1, function(err, reply) {
+  total_reply['ClapsRaised']=reply;
+});
+client.lrange('configuration:livestream:live_settings:Questions:questions', 0, -1, function(err, reply) {
+  total_reply['questions']=reply;
+});
+client.lrange('configuration:livestream:live_settings:Questions:time', 0, -1, function(err, reply) {
+  total_reply['time']=reply;
+});
+client.lrange('configuration:livestream:live_settings:CurrentlyWatching', 0, -1, function(err, reply) {
+  total_reply['CurrentlyWatching']=reply;
+  res.send(total_reply);
+});
+});
 
 //sound of claps
-app.get('/counter',function(req,res){
+app.get('/counter',isAuthenticated,function(req,res){
  
 
 //var i= 0;
@@ -205,7 +271,7 @@ res.redirect('/connect');
 });
 
 //post announcements
-app.all('/post',function(req,res){
+app.get('/post',isAuthenticated,function(req,res){
   const queryObject = url.parse(req.url,true).query;
   var announcements = queryObject['announcements'];
   
@@ -220,7 +286,7 @@ app.all('/post',function(req,res){
   }
 });
 });
-app.all('/remove',function(req,res){
+app.get('/remove',isAuthenticated,function(req,res){
   obs.send('SetTextGDIPlusProperties',
   {"source":"Announcements",
   "text":""
@@ -230,7 +296,7 @@ app.all('/remove',function(req,res){
 res.redirect('/connect');
 });
 //mute/unmute scenes
-app.post('/mute',function(req,res){
+app.post('/mute',isAuthenticated,function(req,res){
   const queryObject = url.parse(req.url,true).query;
   var source = queryObject['source'];
   obs.sendCallback('SetMute',{source:source,mute:true},(err)=>{
@@ -248,7 +314,7 @@ app.post('/mute',function(req,res){
 });
 
 //Update upcoming talks
-app.all('/updatetalks',function(req,res){
+app.post('/updatetalks',isAuthenticated,function(req,res){
   obs.send('SetSourceSettings',{"sourceName":"ShowcaseImage",
   "sourceSettings": {"file":speakers[(req.body.count1)-1].image}
 })
@@ -262,7 +328,7 @@ app.all('/updatetalks',function(req,res){
 });
 var change_volume = 0;
 //To change claps sound as per click
-app.all('/claps',function(req,res)
+app.get('/claps',function(req,res)
 {
   change_volume+=0.1;
   obs.send('ToggleMute',{source:"Claps"});
@@ -274,5 +340,16 @@ app.all('/claps',function(req,res)
   }
   );
 });
+function isAuthenticated(req, res, next) {
+  // do any checks you want to in here
+
+  // CHECK THE USER STORED IN SESSION FOR A CUSTOM VARIABLE
+  // you can do this however you want with whatever variables you set up
+  if (req.session.loggedin)
+      return next();
+
+  // IF A USER ISN'T LOGGED IN, THEN REDIRECT THEM SOMEWHERE
+  res.redirect('/');
+}
 
 module.exports = app;
